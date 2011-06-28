@@ -29,8 +29,7 @@ var tty = require('tty');
 var width = tty.getWindowSize(1)[1];
 var height = tty.getWindowSize(1)[0];
 
-var play = require('play'),
-    colors = require('colors'),
+var colors = require('colors'),
     // TODO: integrate drjackal's cat
     flag = "`·.,¸,.·*¯",
     // current cat is from http://asciimator.net/asciimation/9257
@@ -43,7 +42,6 @@ var play = require('play'),
       ],
     flagLength = flag.length,
     catLength = cat[0].length,
-    songLength = ((60 * 3) + 30) * 1000, // 3 min 30 seconds
     numFlags = Math.floor(width / (flagLength)),
     position = 1,
     meow = 0,
@@ -120,13 +118,6 @@ process.on('SIGINT', function() {
     console.error("\n\n"+ niftylettuceSpaces + niftylettuce+"\n\n");
     process.exit();
 });
-
-// TODO: add a callback to magic() to start once audio starts
-// https://github.com/Marak/play.js/blob/master/examples/demo.js
-play.sound('./nyancat.wav');
-setInterval(function() {
-  play.sound('./nyancat.wav');
-}, songLength);
 
 // thanks to ctide
 (function magic() {
