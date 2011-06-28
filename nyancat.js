@@ -119,7 +119,7 @@ process.on('SIGINT', function() {
     process.exit();
 });
 
-// thanks to ctide
+// thanks to ctide for making this function into a magical, auto-looping function!
 (function magic() {
     for(f=1;f<numFlags + 1;f++) {
       for(h=0;h<height-1;h++) {
