@@ -45,68 +45,78 @@ var colors = require('colors'),
     catLength = cat[0].length,
     numFlags = Math.floor(width / (flagLength)),
     position = 0,
+    nyanposition = 0,
     modulo = width % flagLength, 
     meow = 0,
     step = 0,
     color = 0; // 0 = red, 1 = yellow, 3 = green, 4 = cyan, 5 = blue, 6 = magenta)
 
-// replace nyan with the nyancat as pos
-function tasteTheNyan(nyan, pos) {
-  var nyanLeft = nyan.substring(0,pos);
-  if(last) {
-    nyancat = nyancat.substring(0, nyancat.length - catLength);
+// replace nyan with the nyancat at pos
+function tasteTheNyan(color, nyan, pos) {
+  // get the nyancat
+  var nyancat;
     // dirty
     switch(meow) {
       case 0:
-        nyancat += cat[0].white; // .grey looks more like cat but its too hard to see
+        nyancat = cat[0].white; // .grey looks more like cat but its too hard to see
         break;
       case 1:
-        nyancat += cat[1].white;
+        nyancat = cat[1].white;
         break;
       case 2:
         if(step === 3) {
-          nyancat += cat[2]+step].white;
+          nyancat = cat[2+step].white;
           step = 0;
         } else {
-          nyancat += cat[2+step].white;
+          nyancat = cat[2+step].white;
           step++;
         }
+        meow = 0;
+        break;
+      default:
+        nyancat = cat[0].white;
+        meow = 0;
         break;
     }
-    if(meow === 2) {
-      meow = 0;
-    } else {
-      meow++;
-    }
+  meow++;
+
+  //replace the nyan
+  if (pos < catLength) {
+  // if we are flying into the screen nyan
+    nyan = nyancat.substr(catLength-pos) + nyan.substr(pos, width);
+  } else 
+  if (pos > width) {
+  // if we are flying out of the screen nyan
+    nyan = nyan.substr(0,pos-catLength) + nyancat.substr(0, catLength - (pos - width));
+  } 
+  else {
+  // somewhere in the middle nyan
+    nyan = nyan.substr(0,pos-catLength) + nyancat + nyan.substr(pos);
   }
 
+  return nyan;  
 }
 
 // because unicorns and html5 just are so sweet together (http://paulirish.com)
-function tasteTheRainbow(color, nyancat, pos) {
-
+function tasteTheRainbow(nyancat) {
+  color++;
   switch(color) {
     case 0:
-      console.error(nyancat.red);
-      break;
+      return nyancat.red;
     case 1:
-      console.error(nyancat.yellow);
-      break;
+      return nyancat.yellow;
     case 2:
-      console.error(nyancat.green);
-      break;
+      return nyancat.green;
     case 3:
-      console.error(nyancat.cyan);
-      break;
+      return nyancat.cyan;
     case 4:
-      console.error(nyancat.blue);
-      break;
+      return nyancat.blue;
     case 5:
-      console.error(nyancat.magenta);
-      break;
+      color = 0;
+      return nyancat.magenta;
     default:
-      console.error(nyancat.rainbow);
-      break;
+      color = 0;
+      return nyancat.rainbow;
   }
 }
 
@@ -129,33 +139,21 @@ process.on('SIGINT', function() {
 
 // thanks to ctide for making this function into a magical, auto-looping function!
 function magic() {
-  var nyancat = "";
-  var last = false;
+  var nyancat = flag.substr(position);
   //for the entire width
-  for(w=0;w<numFlags;w++) {
-    if(w === 0) {
-      nyancat += flag.substring(position, flagLength);
-    } else if (w === numFlags - 1) {
-      nyancat += (flag + flag.substring(0, position));
-      last = true;
-    } else {
-      nyancat += flag;
-    }
+  for(w=1;w<numFlags-1;w++) {
+    nyancat += flag;
   }
-  // now the color
-  if (color === 5) {
-    color = 0;
-  }
-  else {
-    color++;
-  }
+  nyancat += (flag + flag.substring(0, position));
   // draw it
-  tasteTheRainbow(color, nyancat, last);
+  tasteTheNyan(tasteTheRainbow(nyancat), nyanposition);
   if(position === flagLength) {
       position = 1;
       } else {
         position++;
       }
   }
-};
+}
+
+nyanTerval = setInterval(magic, 60);
 
