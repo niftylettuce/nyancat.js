@@ -1,6 +1,6 @@
 {
   "name" : "nyancat",
-  "version" : "0.0.2",
+  "version" : "0.0.3",
   "description" : "print a nyan cat to the console",
   "author" : "Nick Baugh <niftylettuce@gmail.com> (http://nickbaugh.com/)",
   "license" : "MIT/X11",
