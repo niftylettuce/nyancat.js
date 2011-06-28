@@ -30,27 +30,29 @@ var width = tty.getWindowSize(1)[1];
 var height = tty.getWindowSize(1)[0];
 
 var colors = require('colors'),
-    // TODO: integrate drjackal's cat
     flag = "`·.,¸,.·*¯",
     // current cat is from http://asciimator.net/asciimation/9257
-    // TODO: we need something better maybe
+    // modified, added top ears, UU legs
     cat = [
-        ' .---.   ',
+        ' .---/V\ ',
         '~|__(^.^)',
-        ' " "    ',
-        '  "  "   '
+        ' UU UU   ',
+        ' U U U U ',
+        '  UU  UU ',
+        ' U U U U ',
       ],
     flagLength = flag.length,
     catLength = cat[0].length,
     numFlags = Math.floor(width / (flagLength)),
-    position = 1,
+    position = 0,
+    modulo = width % flagLength, 
     meow = 0,
     step = 0,
     color = 0; // 0 = red, 1 = yellow, 3 = green, 4 = cyan, 5 = blue, 6 = magenta)
 
-// because unicorns and html5 just are so sweet together (http://paulirish.com)
-function tasteTheRainbow(color, nyancat, last) {
-
+// replace nyan with the nyancat as pos
+function tasteTheNyan(nyan, pos) {
+  var nyanLeft = nyan.substring(0,pos);
   if(last) {
     nyancat = nyancat.substring(0, nyancat.length - catLength);
     // dirty
@@ -62,12 +64,12 @@ function tasteTheRainbow(color, nyancat, last) {
         nyancat += cat[1].white;
         break;
       case 2:
-        if(step === 0) {
-          nyancat += cat[2].white;
-          step = 1;
-        } else {
-          nyancat += cat[3].white;
+        if(step === 3) {
+          nyancat += cat[2]+step].white;
           step = 0;
+        } else {
+          nyancat += cat[2+step].white;
+          step++;
         }
         break;
     }
@@ -77,6 +79,12 @@ function tasteTheRainbow(color, nyancat, last) {
       meow++;
     }
   }
+
+}
+
+// because unicorns and html5 just are so sweet together (http://paulirish.com)
+function tasteTheRainbow(color, nyancat, pos) {
+
   switch(color) {
     case 0:
       console.error(nyancat.red);
@@ -120,33 +128,34 @@ process.on('SIGINT', function() {
 });
 
 // thanks to ctide for making this function into a magical, auto-looping function!
-(function magic() {
-    for(f=1;f<numFlags + 1;f++) {
-      for(h=0;h<height-1;h++) {
-        var nyancat = "";
-        var last = false;
-        for(w=0;w<numFlags;w++) {
-          if(w === 0) {
-            nyancat += flag.substring(position, flagLength);
-          } else if (w === numFlags - 1) {
-            nyancat += (flag + flag.substring(0, position));
-            last = true;
-          } else {
-            nyancat += flag;
-          }
-        }
-        if(color === 5)
-          color = 0;
-        else
-          color++;
-        tasteTheRainbow(color, nyancat, last);
-      }
-      if(position === flagLength) {
-        position = 1;
+function magic() {
+  var nyancat = "";
+  var last = false;
+  //for the entire width
+  for(w=0;w<numFlags;w++) {
+    if(w === 0) {
+      nyancat += flag.substring(position, flagLength);
+    } else if (w === numFlags - 1) {
+      nyancat += (flag + flag.substring(0, position));
+      last = true;
+    } else {
+      nyancat += flag;
+    }
+  }
+  // now the color
+  if (color === 5) {
+    color = 0;
+  }
+  else {
+    color++;
+  }
+  // draw it
+  tasteTheRainbow(color, nyancat, last);
+  if(position === flagLength) {
+      position = 1;
       } else {
         position++;
       }
-    }
-    process.nextTick(magic);
-})();
+  }
+};
 
