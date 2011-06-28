@@ -1,4 +1,4 @@
-<h1>nyancat.js - nyancat in node using <a href="https://github.com/Marak" target="_blank">Marak</a>'s <a href="https://github.com/Marak/play.js" target="_blank">colors.js</a>!</h1>
+<h1>nyancat.js - nyancat in node using <a href="https://github.com/Marak" target="_blank">Marak</a>'s <a href="https://github.com/Marak/colors.js" target="_blank">colors.js</a>!</h1>
 
 <img src="http://i.imgur.com/IMJE1.png" alt="nyancat.js screenshot" />
 
