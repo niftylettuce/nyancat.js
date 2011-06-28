@@ -23,13 +23,15 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 */
+var tty = require('tty'),
+    //play = require('play').Play(),
+    colors = require('colors'),
+    stdin = process.openStdin();
 
-var tty = require('tty');
+var self = this;
 
-var width = tty.getWindowSize(1)[1];
-var height = tty.getWindowSize(1)[0];
-
-var colors = require('colors'),
+var width = tty.getWindowSize(1)[1],
+    height = tty.getWindowSize(1)[0],
     flag = "`·.,¸,.·*¯",
     // current cat is from http://asciimator.net/asciimation/9257
     // modified, added top ears, UU legs
@@ -49,8 +51,59 @@ var colors = require('colors'),
     step = 0,
     color = -1; // 0 = red, 1 = yellow, 3 = green, 4 = cyan, 5 = blue, 6 = magenta)
 
-var nyanTerval = null;
+// Key stuff
+var nyanTerval = null,
+    paused = false,
+    music = false,
+    speed = 100;
 
+// User Control Stuff
+
+tty.setRawMode(true);
+
+stdin.on('keypress', function (chunk, key) {
+  if (!key) return;
+  if (key.ctrl && key.name === 'c') {
+    nyanxit();
+  }
+  else if (key.name === 'q' || key.name === 'escape') {
+    nyanxit();
+  }
+  //louder 
+  else if (key.name === 's') {
+    speed += 5;
+    if(nyanTerval){
+      clearInterval(nyanTerval);
+      nyanTerval = setInterval(magic, speed);
+    }
+  }
+  else if (key.name === 'f') {
+    if(speed > 10) {
+        speed -= 5;
+    }
+    if(nyanTerval){
+      clearInterval(nyanTerval);
+      nyanTerval = null;
+      nyanTerval = setInterval(magic, speed);
+    }
+  }
+  else if (key.name === 'p') {
+    paused = paused ? false : true;
+    if (paused) {
+      clearInterval(nyanTerval);
+      nyanTerval = null;
+    }
+    else {
+      nyanTerval = setInterval(magic, speed);
+    }
+  }
+  else {
+    //console.log(arguments);
+  }
+});
+
+
+//////////////////////////////////////////////////Begin Nyan
 // replace nyan with the nyancat at pos
 function tasteTheNyan(color, nyan, pos) {
   // get the nyancat
@@ -130,14 +183,20 @@ var niftylettuce = "by niftylettuce | github.com/niftylettuce/nyancat.js | @nift
                    nyancatAsciiSpaces + "|_| |_|\\__, |\\__,_|_| |_|\\___\\__,_|\\__(_)/ |___/\n" +
                    nyancatAsciiSpaces + "       |___/                           |__/   ";
 
-process.on('SIGINT', function() {
+function nyanxit() {
+  if (nyanTerval) clearInterval(nyanTerval);
     console.error("\n\n" + nyancatAscii.rainbow);
     console.error("\n\n"+ niftylettuceSpaces + niftylettuce+"\n\n");
     process.exit();
-});
+}
+
+process.on('SIGINT', nyanxit);
 
 // thanks to ctide for making this function into a magical, auto-looping function!
 function magic() {
+  if (paused) {
+    return;
+  }
   var nyannyan,nyanPrint;
   var nyancat = '';
   //for the entire width
@@ -156,5 +215,5 @@ function magic() {
   nyanposition = nyanposition > width + catLength*2 ? nyanposition = 0 : nyanposition+1;
 }
 
-nyanTerval = setInterval(magic, 90);
+nyanTerval = setInterval(magic, speed);
 
