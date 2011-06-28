@@ -9,7 +9,14 @@
     npm install -g nyancat
     nyancat
 
+    use: 
+      Q or ESC or CTRL+C to Exit
+      F to speed up
+      S to slow down
+      P to Toggle Pause
+
 <h3><u>Hint:</u> Resize your terminal window then run nyancat.js again... and magic!</h3>
+
 
 <h4>Hop into #node.js today on irc.freenode.net!</h4>
 
