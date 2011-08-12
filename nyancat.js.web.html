@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>nyancat.js</title>
+<link href='http://fonts.googleapis.com/css?family=VT323' rel='stylesheet' type='text/css'>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+<script src="nyancat.js.web.js"></script>
+<style>
+body, pre {
+  background-color: black;
+  color: white;
+  font-family: 'VT323', cursive;
+  font-size: 24px;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  }
+#nyansong {
+  -moz-transition-property: top;
+  -moz-transition-duration: 1s;
+  -o-transition-property: top;
+  -o-transition-duration: 1s;
+  -webkit-transition-property: top;
+  -webkit-transition-duration: 1s;
+  position: fixed;
+  left: 0;
+  top: -349px;
+  width: 475px;
+  height: 399px;
+  }
+#nyansong:hover {
+  top: 0;
+  }
+</style>
+</head>
+<body>
+<div id='nyancat'></div>
+<div id='nyansong'><object width="425" height="349"><param name="movie" value="http://www.youtube.com/v/QH2-TGUlwu4?version=3&amp;hl=en_US&amp;rel=0&amp;autoplay=1&amp;loop=1&amp;playlist=QH2-TGUlwu4&amp;autohide=1"></param><param name="allowFullScreen" value="true"></param><param name="allowscriptaccess" value="always"></param><embed src="http://www.youtube.com/v/QH2-TGUlwu4?version=3&amp;hl=en_US&amp;rel=0&amp;autoplay=1&amp;loop=1&amp;playlist=QH2-TGUlwu4&amp;autohide=1" type="application/x-shockwave-flash" width="425" height="349" allowscriptaccess="always" allowfullscreen="true"></embed></object></div>
+</body>
+<!-- vim:sts=2:sw=2:et:smarttab -->
+</html>
