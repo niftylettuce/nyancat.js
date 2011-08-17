@@ -36,7 +36,7 @@ var width = tty.getWindowSize(1)[1],
     // current cat is from http://asciimator.net/asciimation/9257
     // modified, added top ears, UU legs
     cat = [
-       '  ,---/V\\ ',
+       '  ,---/V\\',
         '~|__(o.o)',
         ' U U U U ',
         '  UU  UU ',
@@ -111,9 +111,6 @@ function tasteTheNyan(color, nyan, pos) {
   var nyancat;
     // dirty
     switch(meow) {
-      case 0:
-        nyancat = cat[0]; // .grey looks more like cat but its too hard to see
-        break;
       case 1:
         nyancat = cat[1];
         break;
@@ -125,28 +122,26 @@ function tasteTheNyan(color, nyan, pos) {
           nyancat = cat[2+step];
           step++;
         }
-        meow = -1;
         break;
+      case 0:
       default:
-        nyancat = cat[0];
-        meow = -1;
+        nyancat = cat[0]; // .grey looks more like cat but its too hard to see
         break;
   }
-  meow++;
-
   //replace the nyan
-  if (pos < catLength) {
+  if (pos < nyancat.length) {
   // if we are flying into the screen nyan
-    console.error(nyancat.substr(catLength-pos)[catColor] + nyan.substr(pos+1, width)[color]);
+    console.error(nyancat.substr(nyancat.length-pos)[catColor] + nyan.substr(pos+0, width)[color]);
   } else 
   if (pos > width) {
   // if we are flying out of the screen nyan
-    console.error(nyan.substr(0,pos-catLength)[color] + nyancat.substr(0, catLength - (pos - width))[catColor]);
+    console.error(nyan.substr(0,pos-nyancat.length)[color] + nyancat.substr(0, nyancat.length - (pos - width))[catColor]);
   } 
   else {
   // somewhere in the middle nyan
-    console.error(nyan.substr(0,pos-catLength)[color] + nyancat[catColor] + nyan.substr(pos)[color]);
+    console.error(nyan.substr(0,pos-nyancat.length)[color] + nyancat[catColor] + nyan.substr(pos)[color]);
   }
+  meow = (meow + 1) % 3;
 }
 
 // because unicorns and html5 just are so sweet together (http://paulirish.com)
@@ -205,9 +200,9 @@ function magic() {
   for(w=0;w<numFlags+2;w++) {
     nyancat += flag;
   }
+  
   nyancat = nyancat.substr(position,width);
-  position = position + modnyan;
-  position = position >= flagLength ? position - flagLength : position;
+  position = (position + flagLength - 1) % flagLength;
 
   // draw it
   nyannyan = tasteTheRainbow();
