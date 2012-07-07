@@ -59,7 +59,7 @@ var nyanTerval = null,
 
 // User Control Stuff
 
-tty.setRawMode(true);
+process.stdin.setRawMode(true);
 
 stdin.on('keypress', function (chunk, key) {
   if (!key) return;
