@@ -1,55 +1,31 @@
 #!/usr/bin/env node
-/*
-nyancat.js
 
-Copyright (c) 2011 Nick Baugh (niftylettuce)
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.
-
-*/
-var tty = require('tty'),
+var colors = require('colors')
     //play = require('play').Play(),
-    colors = require('colors'),
-    stdin = process.openStdin();
+process.stdin.resume()
 
 var self = this;
 
-var width = tty.getWindowSize(1)[1],
-    height = tty.getWindowSize(1)[0],
-    flag = "`·.,¸,.·*¯",
+var width = process.stdout.columns
+  , height = process.stdout.rows
+  , flag = "`·.,¸,.·*¯"
     // current cat is from http://asciimator.net/asciimation/9257
     // modified, added top ears, UU legs
-    cat = [
+  , cat = [
        '  ,---/V\\',
         '~|__(o.o)',
         ' U U U U ',
         '  UU  UU ',
-      ],
-    flagLength = flag.length,
-    catLength = cat[0].length,
-    numFlags = Math.floor(width / (flagLength)),
-    position = 0,
-    nyanposition = 0,
-    modnyan = width % flagLength, 
-    meow = 0,
-    step = 0,
-    color = -1; // 0 = red, 1 = yellow, 3 = green, 4 = cyan, 5 = blue, 6 = magenta)
+      ]
+  , flagLength = flag.length
+  , catLength = cat[0].length
+  , numFlags = Math.floor(width / (flagLength))
+  , position = 0
+  , nyanposition = 0
+  , modnyan = width % flagLength
+  , meow = 0
+  , step = 0
+  , color = -1; // 0 = red, 1 = yellow, 3 = green, 4 = cyan, 5 = blue, 6 = magenta)
 
 // Key stuff
 var nyanTerval = null,
@@ -57,27 +33,41 @@ var nyanTerval = null,
     music = false,
     speed = 100;
 
+var niftylettuce = "by niftylettuce | github.com/niftylettuce/nyancat.js | @niftylettuce";
+var niftylettuceSpaces = new Array(Math.floor((width - niftylettuce.length)/ 2)).join(" ");
+var nyancatAsciiLength = "                                   _      _   ";
+var nyancatAsciiSpaces = new Array(Math.floor((width - nyancatAsciiLength.length)/ 2)).join(" ");
+var nyancatAscii = nyancatAsciiSpaces + "                                   _      _   \n" +
+                   nyancatAsciiSpaces + " _ __  _   _  __ _ _ __   ___ __ _| |_   (_)___\n" +
+                   nyancatAsciiSpaces + "| '_ \\| | | |/ _` | '_ \\ / __/ _` | __|  | / __|\n" +
+                   nyancatAsciiSpaces + "| | | | |_| | (_| | | | | (_| (_| | |_ _ | \\__ \\\n" +
+                   nyancatAsciiSpaces + "|_| |_|\\__, |\\__,_|_| |_|\\___\\__,_|\\__(_)/ |___/\n" +
+                   nyancatAsciiSpaces + "       |___/                           |__/   ";
+
+function nyanxit() {
+  if (nyanTerval) clearInterval(nyanTerval);
+    console.error("\n\n" + nyancatAscii.rainbow);
+    console.error("\n\n"+ niftylettuceSpaces + niftylettuce+"\n\n");
+    process.exit();
+}
+
 // User Control Stuff
-
-tty.setRawMode(true);
-
-stdin.on('keypress', function (chunk, key) {
-  if (!key) return;
-  if (key.ctrl && key.name === 'c') {
+process.stdin.setRawMode(true);
+process.stdin.setEncoding('utf8')
+process.stdin.on('data', function(key) {
+  if (key === 'c')
     nyanxit();
-  }
-  else if (key.name === 'q' || key.name === 'escape') {
+  else if (key === 'q' || key === 'escape')
     nyanxit();
-  }
-  //louder 
-  else if (key.name === 's') {
+  //louder
+  else if (key === 's') {
     speed += 5;
     if(nyanTerval){
       clearInterval(nyanTerval);
       nyanTerval = setInterval(magic, speed);
     }
   }
-  else if (key.name === 'f') {
+  else if (key === 'f') {
     if(speed > 10) {
         speed -= 5;
     }
@@ -87,7 +77,7 @@ stdin.on('keypress', function (chunk, key) {
       nyanTerval = setInterval(magic, speed);
     }
   }
-  else if (key.name === 'p') {
+  else if (key === 'p') {
     paused = paused ? false : true;
     if (paused) {
       clearInterval(nyanTerval);
@@ -98,6 +88,7 @@ stdin.on('keypress', function (chunk, key) {
     }
   }
   else {
+    nyanxit();
     //console.log(arguments);
   }
 });
@@ -123,7 +114,6 @@ function tasteTheNyan(color, nyan, pos) {
           step++;
         }
         break;
-      case 0:
       default:
         nyancat = cat[0]; // .grey looks more like cat but its too hard to see
         break;
@@ -132,11 +122,11 @@ function tasteTheNyan(color, nyan, pos) {
   if (pos < nyancat.length) {
   // if we are flying into the screen nyan
     console.error(nyancat.substr(nyancat.length-pos)[catColor] + nyan.substr(pos+0, width)[color]);
-  } else 
+  } else
   if (pos > width) {
   // if we are flying out of the screen nyan
     console.error(nyan.substr(0,pos-nyancat.length)[color] + nyancat.substr(0, nyancat.length - (pos - width))[catColor]);
-  } 
+  }
   else {
   // somewhere in the middle nyan
     console.error(nyan.substr(0,pos-nyancat.length)[color] + nyancat[catColor] + nyan.substr(pos)[color]);
@@ -167,24 +157,6 @@ function tasteTheRainbow() {
   }
 }
 
-var niftylettuce = "by niftylettuce | github.com/niftylettuce/nyancat.js | @niftylettuce";
-    niftylettuceSpaces = new Array(Math.floor((width - niftylettuce.length)/ 2)).join(" "),
-    nyancatAsciiLength = "                                   _      _   ",
-    nyancatAsciiSpaces = new Array(Math.floor((width - nyancatAsciiLength.length)/ 2)).join(" "),
-    nyancatAscii = nyancatAsciiSpaces + "                                   _      _   \n" +
-                   nyancatAsciiSpaces + " _ __  _   _  __ _ _ __   ___ __ _| |_   (_)___\n" +
-                   nyancatAsciiSpaces + "| '_ \\| | | |/ _` | '_ \\ / __/ _` | __|  | / __|\n" +
-                   nyancatAsciiSpaces + "| | | | |_| | (_| | | | | (_| (_| | |_ _ | \\__ \\\n" +
-                   nyancatAsciiSpaces + "|_| |_|\\__, |\\__,_|_| |_|\\___\\__,_|\\__(_)/ |___/\n" +
-                   nyancatAsciiSpaces + "       |___/                           |__/   ";
-
-function nyanxit() {
-  if (nyanTerval) clearInterval(nyanTerval);
-    console.error("\n\n" + nyancatAscii.rainbow);
-    console.error("\n\n"+ niftylettuceSpaces + niftylettuce+"\n\n");
-    process.exit();
-}
-
 process.on('SIGINT', nyanxit);
 
 // thanks to ctide for making this function into a magical, auto-looping function!
@@ -197,10 +169,10 @@ function magic() {
   //for the entire width
   // +1 because, position may be near the end
   // +1 because width > numberFlag*flagLen
-  for(w=0;w<numFlags+2;w++) {
+  for(var w=0; w<numFlags+2; w++) {
     nyancat += flag;
   }
-  
+
   nyancat = nyancat.substr(position,width);
   position = (position + flagLength - 1) % flagLength;
 

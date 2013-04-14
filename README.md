@@ -9,7 +9,7 @@
     npm install -g nyancat
     nyancat
 
-    use: 
+    use:
       Q or ESC or CTRL+C to Exit
       F to speed up
       S to slow down
