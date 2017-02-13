@@ -182,5 +182,11 @@ function magic() {
   nyanposition = nyanposition > width + catLength*2 ? nyanposition = 0 : nyanposition+1;
 }
 
-nyanTerval = setInterval(magic, speed);
+function supermagic() {
+  process.stdout.write('\033[2J');
+  magic();
+  magic();
+  magic();
+}
 
+nyanTerval = setInterval(supermagic, speed);
