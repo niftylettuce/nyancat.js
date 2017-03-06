@@ -1,9 +1,9 @@
 {
   "name" : "nyancat",
-  "version" : "0.0.4",
+  "version" : "0.0.5",
   "description" : "Print a nyan cat to the console.",
   "author" : "Nick Baugh <niftylettuce@gmail.com> (http://nickbaugh.com/)",
-  "license" : "MIT/X11",
+  "license" : "MIT",
   "main" : "nyancat.js",
   "repository" : {
     "type" : "git",
